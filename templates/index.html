@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Image Demo - Flask</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Background and animations */
+        body {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            min-height: 100vh;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: gradientAnimation 10s ease infinite;
+            background-size: 400% 400%;
+            overflow: hidden;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 0 20px;
+            margin-top: 50px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #2575fc;
+            border: none;
+            border-radius: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .response-box {
+            background-color: #ffffff;
+            border: 2px solid #2575fc;
+            border-radius: 10px;
+            padding: 20px;
+            color: #333;
+            margin-top: 15px;
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center mb-4" style="color: #fff;">Gemini Image Analysis</h2>
+    <div class="card" id="query-card">
+        <form id="query-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="inputPrompt" style="font-weight: bold;">Describe Your Query:</label>
+                <input type="text" name="input_prompt" id="inputPrompt" class="form-control" placeholder="Enter your question about the image..." required>
+            </div>
+            <div class="form-group">
+                <label for="uploadedImage" style="font-weight: bold;">Upload Image (JPG, JPEG, PNG):</label>
+                <input type="file" name="uploaded_image" id="uploadedImage" class="form-control-file" required>
+            </div>
+            <button type="button" class="btn btn-primary btn-block" onclick="submitForm()">Analyze Image</button>
+        </form>
+    </div>
+
+    <div class="response-box" id="response-card">
+        <h4>Response:</h4>
+        <p id="response-text"></p>
+    </div>
+</div>
+
+<script>
+    async function submitForm() {
+        // Hide form and show response card
+        document.getElementById("query-card").style.display = "none";
+        document.getElementById("response-card").style.display = "block";
+        document.getElementById("response-text").innerHTML = "Analyzing image...";
+
+        const formData = new FormData(document.getElementById("query-form"));
+
+        try {
+            const response = await fetch("/", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.response) {
+                    document.getElementById("response-text").innerText = result.response;
+                } else if (result.error) {
+                    document.getElementById("response-text").innerText = "Error: " + result.error;
+                }
+            } else {
+                document.getElementById("response-text").innerText = "Error: Unable to process the request.";
+            }
+        } catch (error) {
+            document.getElementById("response-text").innerText = "Error: " + error.message;
+        }
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
