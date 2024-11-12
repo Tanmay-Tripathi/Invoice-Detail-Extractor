@@ -27,7 +27,14 @@ Follow these steps to get the project up and running locally:
 - Python 3.7 or higher
 - Google API Key for accessing Gemini AI (set in the `.env` file)
 
-### 1. Clone the Repository
+### How it works
+
+- Upload Image: The user uploads an image of an invoice.
+- Input Query: The user enters a text query about the uploaded invoice.
+- AI Processing: The app sends the image and query to the Google Gemini API for analysis.
+- Response: The AI model processes the image and returns an appropriate response to the user.
+
+### Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/gemini-image-analysis.git
